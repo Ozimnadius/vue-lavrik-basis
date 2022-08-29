@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson-4</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <style>
+        .slide-enter {
+            opacity: 0;
+        }
+
+        .slide-enter-active {
+            transition: opacity 0.5s;
+        }
+
+        .slide-leave-active {
+            transition: opacity 0.5s;
+        }
+
+        .slide-leave-to {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="item">
+        <button class="btn btn-primary"
+                v-on:click="showRes = !showRes">
+            {{btnTxt}}
+        </button>
+        <hr>
+        <app-progress
+                v-bind:val="sum"
+                v-bind:max="maxItems * 5"
+        ></app-progress>
+        <br>
+        <transition name="slide">
+            <h2 class="alert alert-success"
+                v-show="showRes">
+                Your profit {{sum}}
+            </h2>
+        </transition>
+        <hr>
+        <app-progress v-bind:val="numbers.length" v-bind:max="maxItems"></app-progress>
+        <br>
+        <button type="button" class="btn btn-success"
+                v-on:click="addNumber"
+                v-bind:disabled="done">
+            Add number
+        </button>
+        <br>
+        <br>
+        <ul class="list-group">
+            <li class="list-group-item"
+                v-for="number in numbers">
+                {{ number }}
+            </li>
+        </ul>
+        <br>
+        <button type="button" class="btn btn-danger"
+                v-on:click="numbers=[]">
+            Delete numbers
+        </button>
+    </div>
+</div>
+<script>
+    Vue.component('app-progress', {
+        props: {
+            max: Number,
+            val: Number
+        },
+        computed: {
+            width() {
+                return {
+                    width: `${this.val / this.max * 100}%`
+                }
+            }
+        },
+        template: `
+          <div class="progress">
+          <div class="progress-bar" v-bind:style="width">
+          </div>
+          </div>
+        `
+    });
+
+
+    let a = new Vue({
+        el: '.item',
+        data: {
+            showRes: true,
+            numbers: [],
+            maxItems: 10
+        },
+        methods: {
+            addNumber() {
+                if (!this.done) {
+                    return this.numbers.push(Math.floor(Math.random() * 11) - 5);
+                }
+            }
+        },
+        computed: {
+            sum() {
+                return this.numbers.reduce((sum, num) => sum + num, 0);
+            },
+            btnTxt() {
+                return this.showHeader ? 'Hide result' : 'Show result';
+            },
+            done() {
+                return this.numbers.length >= this.maxItems;
+            }
+        }
+    });
+</script>
+</body>
+</html>
